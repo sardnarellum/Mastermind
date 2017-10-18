@@ -21,7 +21,7 @@ readCode str
 	| length (strToList str) == 4 && allDigits (strToList str) = Just (map digitToInt (strToList str))
 	| otherwise = Nothing
 	where
-		allDigits [] = True
+		allDigits []     = True
 		allDigits [x:xs] = isDigit x && (allDigits xs)
 		strToList str = [ char \\ char <-: str ]
 
@@ -30,7 +30,10 @@ maybe f b (Nothing) = b
 maybe f b (Just a) = f a
 
 allMatches :: [Int] String -> (Int, Int)
-allMatches a b = (maybe (matches a) 0 (readCode b), maybe (positionalMatches a) 0 (readCode b))
+allMatches a b = (all a b - pos a b, pos a b)
+	where
+		all a b = maybe (matches a) 0 (readCode b)
+		pos a b = maybe (positionalMatches a) 0 (readCode b)
 
 Start = [ positionalMatches_test, matches_test, readCode_test, maybe_test, allMatches_test ]
   
@@ -59,7 +62,7 @@ maybe_test =
   ]
   
 allMatches_test =
-  [ allMatches [4,2,7,1] "1234" == (3, 1)
+  [ allMatches [4,2,7,1] "1234" == (2, 1)
   , allMatches [9,3,0,5] "1234" == (1, 0)
   , allMatches [9,3,0,5] "123a" == (0, 0)
   ]
