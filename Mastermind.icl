@@ -5,9 +5,10 @@ import StdEnv, StdLib
 positionalMatches :: [Int] [Int] -> Int
 positionalMatches [] _ = 0
 positionalMatches _ [] = 0
-positionalMatches [x:xs] [y:ys]
-	| x == y    = 1 + positionalMatches xs ys
-	| otherwise = 0 + positionalMatches xs ys
+positionalMatches [x:xs] [y:ys] = chi (x == y) + positionalMatches xs ys
+	where
+		chi True  = 1
+		chi False = 0
 
 matches :: [Int] [Int] -> Int
 matches [] _ = 0
@@ -17,13 +18,14 @@ matches [x:xs] ys = minLength [x:xs] ys + matches (filter ((<>)x) xs) (filter ((
 		minLength [x:xs] ys = min (length (filter ((==)x) xs) + 1) (length (filter ((==)x) ys))
 
 readCode :: String -> Maybe [Int]
-readCode str
-	| length (strToList str) == 4 && allDigits (strToList str) = Just (map digitToInt (strToList str))
-	| otherwise = Nothing
+readCode str = resultIfOk (cond str) (map digitToInt (strToList str))
 	where
+		cond str = length (strToList str) == 4 && allDigits (strToList str)
 		allDigits []     = True
-		allDigits [x:xs] = isDigit x && (allDigits xs)
+		allDigits [x:xs] = isDigit x && allDigits xs
 		strToList str = [ char \\ char <-: str ]
+		resultIfOk False _ = Nothing
+		resultIfOk True x = (Just x)
 
 maybe :: (a -> b) b (Maybe a) -> b
 maybe f b (Nothing) = b
