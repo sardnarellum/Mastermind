@@ -17,13 +17,10 @@ matches [x:xs] ys = minLength [x:xs] ys + matches (filter ((<>)x) xs) (filter ((
 	where
 		minLength [x:xs] ys = min (length (filter ((==)x) xs) + 1) (length (filter ((==)x) ys))
 
-
 readCode :: String -> Maybe [Int]
 readCode str = resultIfOk (cond str) (map digitToInt (fromString str))
 	where
-		cond str = (len(fromString str) == 4) && allDigits(fromString str)
-		len :: [Int] -> Int
-		len a = length a
+		cond str = size str == 4 && allDigits(fromString str)
 		allDigits []     = True
 		allDigits [x:xs] = isDigit x && allDigits xs
 		resultIfOk False _ = Nothing
